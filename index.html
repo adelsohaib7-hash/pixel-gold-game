@@ -2,40 +2,68 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>PixelGold - Stable</title>
+    <title>PixelGold - المنسخة النهائية</title>
     <style>
-        body { margin: 0; background: #121212; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; }
-        .header { width: 100%; background: #1e1e1e; padding: 10px; text-align: center; border-bottom: 2px solid #333; font-size: 14px; color: #888; }
-        #balance { font-size: 40px; font-weight: bold; color: #ffd700; margin: 20px 0; }
-        .coin { width: 180px; height: 180px; background: #ffd700; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #000; font-weight: bold; cursor: pointer; transition: 0.1s; }
-        .coin:active { transform: scale(0.95); }
+        body { margin: 0; background: #1a1a1a; color: #fff; font-family: sans-serif; height: 100vh; display: flex; flex-direction: column; }
+        .screen { display: none; flex: 1; padding: 20px; align-items: center; justify-content: center; flex-direction: column; }
+        .screen.active { display: flex; }
+        #user-tag { background: #333; padding: 5px; font-size: 12px; color: #aaa; text-align: center; }
+        #balance { font-size: 32px; font-weight: bold; color: #ffd700; }
+        .coin { width: 160px; height: 160px; background: #ffd700; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #000; font-weight: bold; margin: 20px 0; }
+        .energy-bar-bg { width: 80%; height: 15px; background: #333; border-radius: 10px; overflow: hidden; margin-bottom: 10px; }
+        #energy-bar { width: 100%; height: 100%; background: #007bff; transition: width 0.2s; }
+        .nav { height: 60px; background: #0f0f1a; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #333; }
+        .nav-item { cursor: pointer; text-align: center; font-size: 12px; }
     </style>
 </head>
 <body>
 
-    <div class="header" id="user-tag">ID: جاري التحميل...</div>
-    <div id="balance">PG 0</div>
-    <div class="coin" onclick="handleTap()">اضغط</div>
+    <div id="user-tag">ID: جاري التحميل...</div>
+
+    <div id="home" class="screen active">
+        <div id="balance">PG 0</div>
+        <div class="coin" onclick="addGold()">اضغط</div>
+        <div class="energy-bar-bg"><div id="energy-bar"></div></div>
+        <div id="timer">جاهز (100/100)</div>
+    </div>
+
+    <div class="nav">
+        <div class="nav-item" onclick="show('home')">🏠 الرئيسية</div>
+    </div>
 
     <script>
-        // 1. نظام التعريف (ID)
+        // تحميل البيانات من الذاكرة
+        let gold = parseInt(localStorage.getItem('gold') || 0);
+        let energy = parseInt(localStorage.getItem('energy') || 100);
         let userId = localStorage.getItem('pid') || 'PG-' + Date.now();
         localStorage.setItem('pid', userId);
         document.getElementById('user-tag').innerText = "ID: " + userId;
+        document.getElementById('balance').innerText = "PG " + gold;
+        document.getElementById('energy-bar').style.width = energy + "%";
 
-        // 2. نظام الرصيد
-        let gold = parseInt(localStorage.getItem('gold') || 0);
-        function updateDisplay() {
-            document.getElementById('balance').innerText = "PG " + gold;
+        function addGold() {
+            if (energy > 0) {
+                gold++; energy--;
+                localStorage.setItem('gold', gold);
+                localStorage.setItem('energy', energy);
+                document.getElementById('balance').innerText = "PG " + gold;
+                document.getElementById('energy-bar').style.width = energy + "%";
+            }
         }
 
-        function handleTap() {
-            gold++;
-            localStorage.setItem('gold', gold);
-            updateDisplay();
+        function show(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
         }
 
-        updateDisplay();
+        // عداد استعادة الطاقة (سيعمل في الخلفية)
+        setInterval(() => {
+            if (energy < 100) {
+                energy++;
+                localStorage.setItem('energy', energy);
+                document.getElementById('energy-bar').style.width = energy + "%";
+            }
+        }, 10000); // يستعيد طاقة كل 10 ثواني (يمكنك تغييرها)
     </script>
 </body>
 </html>
