@@ -2,245 +2,70 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pixel Gold Game</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pixel Gold Mining</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #121212;
             color: #ffffff;
-            user-select: none;
             display: flex;
             flex-direction: column;
             height: 100vh;
             overflow: hidden;
         }
-
-        /* الشاشات المختلفة */
-        .page {
-            display: none;
+        .container {
+            flex: 1;
+            display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            flex: 1;
             padding: 20px;
-            overflow-y: auto;
-            box-sizing: border-box;
+            text-align: center;
         }
-
-        .active {
+        .screen {
+            display: none;
+            width: 100%;
+            flex-direction: column;
+            align-items: center;
+        }
+        .screen.active {
             display: flex;
         }
-
-        /* شاشة اللعبة الرئيسية */
-        .score-container {
-            font-size: 48px;
-            font-weight: bold;
-            color: #ffd700;
-            margin-bottom: 30px;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-        }
-
-        .coin {
-            width: 200px;
-            height: 200px;
-            background: linear-gradient(135deg, #ffe066, #f5b041);
-            border-radius: 50%;
-            box-shadow: 0 0 25px #f39c12, inset 0 0 15px #fff;
-            cursor: pointer;
-            transition: transform 0.1s ease;
-        }
-
-        .coin:active {
-            transform: scale(0.95);
-        }
-
-        /* شاشة المهام ودعوة الأصدقاء */
-        h2 {
-            color: #ffd700;
+        /* الرصيد الأساسي */
+        .balance-container {
             margin-bottom: 20px;
         }
-
-        .task-card, .ref-card {
-            background-color: #1e1e1e;
-            border: 1px solid #333;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 15px;
-            width: 100%;
-            max-width: 400px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-sizing: border-box;
-        }
-
-        .task-info {
-            text-align: right;
-        }
-
-        .task-title {
-            font-weight: bold;
-            font-size: 16px;
-        }
-
-        .task-reward {
-            color: #2ecc71;
+        .balance-label {
             font-size: 14px;
+            color: #aaaaaa;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .balance-value {
+            font-size: 38px;
+            font-weight: bold;
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
             margin-top: 5px;
         }
-
-        .btn {
-            background: linear-gradient(135deg, #f1c40f, #f39c12);
-            border: none;
-            color: #fff;
-            padding: 10px 15px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .btn.done {
-            background: #27ae60;
-        }
-
-        /* شريط التنقل السفلي */
-        .nav-bar {
-            background-color: #1a1a1a;
-            border-top: 1px solid #333;
-            display: flex;
-            justify-content: space-around;
-            padding: 12px 0;
-            width: 100%;
-        }
-
-        .nav-item {
-            color: #888;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
+        /* جهاز التعدين */
+        .mining-machine {
+            background: radial-gradient(circle, #1e1e1e 0%, #151515 100%);
+            border: 2px solid #333;
+            border-radius: 50%;
+            width: 200px;
+            height: 200px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 5px;
-        }
-
-        .nav-item.active-nav {
-            color: #ffd700;
-        }
-
-        .nav-icon {
-            font-size: 20px;
-        }
-    </style>
-</head>
-<body>
-
-    <div id="home-page" class="page active">
-        <div class="score-container" id="score">0</div>
-        <div class="coin" onclick="clickCoin()"></div>
-        <p style="margin-top: 25px; color: #888;">اضغط لتجميع الذهب!</p>
-    </div>
-
-    <div id="tasks-page" class="page">
-        <h2>المهام اليومية</h2>
-        
-        <div class="task-card">
-            <div class="task-info">
-                <div class="task-title">الاشتراك في قناة التلغرام</div>
-                <div class="task-reward">+1,000 عملة</div>
-            </div>
-            <button class="btn" onclick="doTask(this, 1000)">ابدأ</button>
-        </div>
-
-        <div class="task-card">
-            <div class="task-info">
-                <div class="task-title">متابعة حسابنا على منصة X</div>
-                <div class="task-reward">+500 عملة</div>
-            </div>
-            <button class="btn" onclick="doTask(this, 500)">ابدأ</button>
-        </div>
-    </div>
-
-    <div id="friends-page" class="page">
-        <h2>دعوة الأصدقاء</h2>
-        <div class="ref-card" style="flex-direction: column; gap: 15px; text-align: center;">
-            <p>شارك رابطك مع أصدقائك واحصل على 2,000 عملة عن كل صديق يسجل!</p>
-            <button class="btn" style="width: 100%;" onclick="shareInvite()">نسخ رابط الدعوة 🔗</button>
-        </div>
-    </div>
-
-    <div class="nav-bar">
-        <div class="nav-item active-nav" onclick="switchPage('home-page', this)">
-            <span class="nav-icon">🪙</span>
-            <span>الرئيسية</span>
-        </div>
-        <div class="nav-item" onclick="switchPage('tasks-page', this)">
-            <span class="nav-icon">📋</span>
-            <span>المهام</span>
-        </div>
-        <div class="nav-item" onclick="switchPage('friends-page', this)">
-            <span class="nav-icon">👥</span>
-            <span>الأصدقاء</span>
-        </div>
-    </div>
-
-    <script>
-        // تفعيل Telegram WebApp
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-
-        // نظام النقاط
-        let score = parseInt(localStorage.getItem('pixel_gold_score')) || 0;
-        document.getElementById('score').innerText = score.toLocaleString();
-
-        function clickCoin() {
-            score += 1;
-            updateScore();
-        }
-
-        function updateScore() {
-            document.getElementById('score').innerText = score.toLocaleString();
-            localStorage.setItem('pixel_gold_score', score);
-        }
-
-        // التنقل بين الصفحات
-        function switchPage(pageId, navElement) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active-nav'));
-            
-            document.getElementById(pageId).classList.add('active');
-            navElement.classList.add('active-nav');
-        }
-
-        // إتمام المهام
-        function doTask(button, reward) {
-            if (button.classList.contains('done')) return;
-            
-            button.innerText = "جاري التحقق...";
-            setTimeout(() => {
-                score += reward;
-                updateScore();
-                button.innerText = "مكتملة ✓";
-                button.classList.add('done');
-                button.disabled = true;
-            }, 2000);
-        }
-
-        // مشاركة رابط الإحالة
-        function shareInvite() {
-            const user = tg.initDataUnsafe?.user;
-            const userId = user ? user.id : 'user';
-            // رابط بوتك الشخصي مضافاً إليه كود الإحالة الخاص بالمستخدم
-            const inviteLink = `https://t.me/PixelGoldGame_bot?start=ref_${userId}`;
-            
-            navigator.clipboard.writeText(inviteLink).then(() => {
-                alert("تم نسخ رابط دعوتك بنجاح! أرسله لأصدقائك.");
-            });
-        }
-    </script>
-</body>
-</html>
+            justify-content: center;
+            margin: 30px 0;
+            position: relative
