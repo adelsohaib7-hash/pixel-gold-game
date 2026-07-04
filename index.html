@@ -6,53 +6,54 @@
     <title>Pixel Gold Mining</title>
     <style>
         * { box-sizing: border-box; }
-        body { margin: 0; background-color: #0a0a0f; color: #fff; font-family: sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        body { margin: 0; background-color: #0a0a0f; color: #fff; font-family: sans-serif; height: 100vh; display: flex; flex-direction: column; }
+        .screen { display: none; flex: 1; overflow-y: auto; padding: 20px; }
+        .screen.active { display: block; }
+        .center-content { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
         
-        /* الشاشات */
-        .screen { display: none; flex: 1; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-        .screen.active { display: flex; }
+        /* التصميم */
+        .balance { font-size: 32px; font-weight: bold; color: #ffd700; text-align: center; }
+        .circle { width: 180px; height: 180px; border-radius: 50%; background: #1a1a2e; border: 4px solid #ffd700; display: flex; align-items: center; justify-content: center; font-size: 50px; cursor: pointer; margin: 20px 0; }
         
-        /* العناصر الرئيسية */
-        .header { text-align: center; margin-bottom: 20px; }
-        .balance { font-size: 40px; font-weight: bold; color: #ffd700; }
+        .referral-card { background: #1a1a2e; padding: 20px; border-radius: 15px; border: 1px solid #333; margin-bottom: 20px; }
+        .btn-action { background: #007bff; color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; }
         
-        .circle { width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, #2a2a3a 0%, #0a0a0f 100%); border: 4px solid #ffd700; display: flex; align-items: center; justify-content: center; font-size: 60px; cursor: pointer; transition: transform 0.1s; box-shadow: 0 0 20px rgba(255, 215, 0, 0.2); }
-        .circle:active { transform: scale(0.95); }
+        .friend-list { margin-top: 20px; }
+        .friend-item { background: #1a1a2e; padding: 10px; border-radius: 8px; margin-bottom: 5px; display: flex; justify-content: space-between; }
         
-        .stats-container { display: flex; justify-content: space-around; width: 100%; max-width: 400px; margin: 20px 0; }
-        .stat-box { text-align: center; background: #1a1a2e; padding: 15px; border-radius: 12px; width: 45%; border: 1px solid #333; }
-        
-        .btn-claim { background: #00e676; color: #000; border: none; padding: 15px; width: 100%; max-width: 300px; border-radius: 12px; font-weight: bold; font-size: 18px; cursor: pointer; }
-        
-        /* القائمة السفلية */
         .nav { height: 70px; background: #0f0f1a; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #333; }
-        .nav-item { cursor: pointer; text-align: center; font-size: 12px; color: #aaa; }
+        .nav-item { cursor: pointer; text-align: center; color: #aaa; }
         .nav-item.active { color: #ffd700; }
     </style>
 </head>
 <body>
 
     <div id="screen-home" class="screen active">
-        <div class="header">
-            <div>الرصيد الإجمالي</div>
+        <div class="center-content">
             <div class="balance" id="total">0.00</div>
+            <div class="circle" id="clicker">P</div>
+            <div>التعدين: <span id="mining-pool">0.00</span> | النقر: <span id="click-pool">0.00</span></div>
+            <button class="btn-action" style="background:#00e676; color:#000;" id="btn-claim">استلام الأرباح</button>
         </div>
-        <div class="circle" id="clicker">P</div>
-        <div class="stats-container">
-            <div class="stat-box">التعدين التلقائي<br><span id="mining-pool">0.00</span></div>
-            <div class="stat-box">نقراتك<br><span id="click-pool">0.00</span></div>
-        </div>
-        <button class="btn-claim" id="btn-claim">استلام الأرباح</button>
     </div>
 
     <div id="screen-tasks" class="screen">
         <h2>قائمة المهام</h2>
-        <p>لا توجد مهام حالياً</p>
     </div>
 
     <div id="screen-friends" class="screen">
-        <h2>دعوة الأصدقاء</h2>
-        <p>شارك رابطك واربح 10%</p>
+        <h2>برنامج الإحالة</h2>
+        <div class="referral-card">
+            <div>مكافأة: 100 PXC لكل إحالة</div>
+            <button class="btn-action">مشاركة الرابط</button>
+            <div style="margin-top:15px;">رابطك: t.me/bot?start=12345</div>
+        </div>
+        
+        <h3>الأصدقاء الذين انضموا:</h3>
+        <div class="friend-list">
+            <div class="friend-item"><span>أحمد</span><span>مكتمل</span></div>
+            <div class="friend-item"><span>سارة</span><span>مكتمل</span></div>
+        </div>
     </div>
 
     <div class="nav">
@@ -62,51 +63,28 @@
     </div>
 
     <script>
-        // المتغيرات
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('screen-' + id).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById('nav-' + id).classList.add('active');
+        }
+
+        // المنطق البرمجي (التعدين والنقر)
         let total = parseFloat(localStorage.getItem('total')) || 0;
         let miningPool = parseFloat(localStorage.getItem('miningPool')) || 0;
         let clickPool = parseFloat(localStorage.getItem('clickPool')) || 0;
 
-        // دالة التنقل
-        function showScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById('screen-' + screenId).classList.add('active');
-            
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById('nav-' + screenId).classList.add('active');
-        }
-
-        // تحديث الواجهة
         function updateUI() {
             document.getElementById('total').innerText = total.toFixed(2);
             document.getElementById('mining-pool').innerText = miningPool.toFixed(2);
             document.getElementById('click-pool').innerText = clickPool.toFixed(2);
         }
 
-        // التعدين التلقائي
-        setInterval(() => {
-            miningPool += 0.01;
-            updateUI();
-            localStorage.setItem('miningPool', miningPool);
-        }, 1000);
-
-        // النقر اليدوي
-        document.getElementById('clicker').onclick = () => {
-            clickPool += 0.05;
-            updateUI();
-            localStorage.setItem('clickPool', clickPool);
-        };
-
-        // استلام الأرباح
-        document.getElementById('btn-claim').onclick = () => {
-            total += (miningPool + clickPool);
-            miningPool = 0; clickPool = 0;
-            updateUI();
-            localStorage.setItem('total', total);
-            localStorage.setItem('miningPool', miningPool);
-            localStorage.setItem('clickPool', clickPool);
-        };
-
+        setInterval(() => { miningPool += 0.01; updateUI(); }, 1000);
+        document.getElementById('clicker').onclick = () => { clickPool += 0.05; updateUI(); };
+        document.getElementById('btn-claim').onclick = () => { total += (miningPool + clickPool); miningPool = 0; clickPool = 0; updateUI(); };
+        
         updateUI();
     </script>
 </body>
