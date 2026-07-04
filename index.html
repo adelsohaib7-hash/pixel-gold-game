@@ -1,21 +1,29 @@
+# كود هيكلي بسيط لبوت تعدين وهمي (Python)
+from telegram import Update
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 import time
 
-# قاموس لتخزين بيانات المستخدمين (للتجربة فقط، استخدم قاعدة بيانات في الواقع)
-users_data = {}
+# قاعدة بيانات وهمية في الذاكرة (استبدلها بـ SQLite لاحقاً)
+users_db = {}
 
-def start_mining(user_id):
-    # تسجيل وقت بدء التعدين
-    users_data[user_id] = {'start_time': time.time(), 'is_mining': True}
-    return "تم بدء التعدين! عد بعد فترة لاستلام أرباحك."
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("مرحباً! استخدم /mine لبدء التعدين و /balance لرصيدك.")
 
-def claim_mining(user_id):
-    if user_id not in users_data or not users_data[user_id]['is_mining']:
-        return "يجب أن تبدأ التعدين أولاً."
+async def mine(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+    current_time = time.time()
     
-    # حساب الوقت المنقضي
-    elapsed_time = time.time() - users_data[user_id]['start_time']
-    # معادلة وهمية: (كل ثانية تعطي 0.1 عملة)
-    earned = elapsed_time * 0.1 
+    # التحقق مما إذا كان المستخدم قد عدن سابقاً
+    last_mine = users_db.get(user_id, 0)
     
-    users_data[user_id]['is_mining'] = False
-    return f"لقد قمت بتعدين {round(earned, 2)} عملة!"
+    if current_time - last_mine > 3600: # انتظار ساعة واحدة (3600 ثانية)
+        users_db[user_id] = current_time
+        await update.message.reply_text("تمت إضافة 10 عملات PG إلى رصيدك!")
+    else:
+        await update.message.reply_text("يجب الانتظار ساعة قبل التعدين مرة أخرى.")
+
+# إعداد البوت
+app = ApplicationBuilder().token("YOUR_TOKEN_HERE").build()
+app.add_handler(CommandHandler("start", start))
+app.add_handler(CommandHandler("mine", mine))
+app.run_polling()
