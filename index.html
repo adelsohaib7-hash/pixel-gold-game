@@ -1,40 +1,15 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PixelGold</title>
-    <style>
-        body { margin: 0; background-color: #1a1a1a; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-        .screen { display: none; flex: 1; padding: 20px; align-items: center; justify-content: center; flex-direction: column; }
-        .screen.active { display: flex; }
-        
-        #balance { font-size: 32px; font-weight: bold; color: #ffd700; margin-bottom: 20px; }
-        
-        .coin { width: 180px; height: 180px; background: #ffd700; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #000; font-weight: bold; cursor: pointer; text-align: center; padding: 10px; }
-        
-        .mining-area { background: #252525; padding: 15px; border-radius: 15px; width: 85%; margin-top: 20px; text-align: center; border: 1px solid #444; }
-        .claim-btn { width: 100%; padding: 12px; background: #007bff; border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .claim-btn:disabled { background: #555; }
-        
-        .nav { height: 60px; background: #0f0f1a; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #333; }
-        .nav-item { cursor: pointer; text-align: center; font-size: 12px; }
-    </style>
-</head>
-<body>
+// ملف server.js (يحتاج Node.js)
+const express = require('express');
+const app = express();
+const db = {}; // هنا ستضع قاعدة بيانات حقيقية مثل Firebase لاحقاً
 
-    <div id="screen-home" class="screen active">
-        <div id="balance">PG 0</div>
-        <div class="coin" id="coinBtn">اضغط لربح PG</div>
-        <div style="color: #888; margin-top: 10px;">1 PG لكل ضغطة</div>
+app.use(express.json());
 
-        <div class="mining-area">
-            <div id="pending-balance" style="font-size: 24px;">0.0000</div>
-            <button id="claimBtn" class="claim-btn" disabled>استلام PG ⬇</button>
-            <p style="font-size: 11px; color: #777; margin-top: 5px;">(يجب الوصول لـ 10 PG للاستلام)</p>
-        </div>
-    </div>
+// حفظ رصيد المستخدم
+app.post('/update-balance', (req, res) => {
+    const { userId, amount } = req.body;
+    db[userId] = (db[userId] || 0) + amount;
+    res.json({ success: true, balance: db[userId] });
+});
 
-    <div id="screen-tasks" class="screen"><h2>📋 المهام</h2></div>
-    <div id="screen-friends" class="screen"><h2>👥 الأصدقاء</h2></div>
-    <div id="screen-wallet" class="screen">
+app.listen(3000, () => console.log('السيرفر يعمل على بورت 3000'));
