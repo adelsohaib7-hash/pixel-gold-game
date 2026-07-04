@@ -5,42 +5,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PixelGold</title>
     <style>
-        body { 
-            margin: 0; 
-            background-color: #1a1a1a; 
-            color: #fff; 
-            font-family: sans-serif; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            height: 100vh; 
-        }
-        .title { font-size: 20px; margin-bottom: 10px; color: #aaa; }
+        body { margin: 0; background-color: #1a1a1a; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
+        
+        .main-container { text-align: center; }
+        
+        /* العملة الرئيسية */
         #balance { font-size: 50px; font-weight: bold; color: #ffd700; margin: 10px 0; }
-        .coin { 
-            width: 200px; 
-            height: 200px; 
-            background: radial-gradient(circle, #ffd700, #b8860b); 
-            border-radius: 50%; 
-            cursor: pointer; 
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-            transition: transform 0.1s;
-        }
-        .coin:active { transform: scale(0.95); }
+        .coin { width: 180px; height: 180px; background: radial-gradient(circle, #ffd700, #b8860b); border-radius: 50%; cursor: pointer; margin-bottom: 30px; box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
+
+        /* منطقة التعدين التلقائي */
+        .mining-area { background: #252525; padding: 20px; border-radius: 15px; width: 85%; margin-top: 10px; border: 1px solid #444; }
+        .mining-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .mining-rate { background: #004400; color: #00ff00; padding: 5px 10px; border-radius: 10px; font-size: 14px; }
+        .claim-btn { width: 100%; padding: 15px; background: #007bff; border: none; border-radius: 10px; color: white; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div class="title">رصيدك من PixelGold</div>
-    <div id="balance">0 PG</div>
-    <div class="coin" onclick="addGold()"></div>
+    <div class="main-container">
+        <div style="color: #aaa;">رصيدك من PixelGold</div>
+        <div id="balance">0 PG</div>
+        <div class="coin" onclick="addGold()"></div>
+
+        <div class="mining-area">
+            <div class="mining-info">
+                <span>في انتظار الاستلام</span>
+                <div class="mining-rate">h/100</div>
+            </div>
+            <div id="pending-balance" style="font-size: 24px; margin-bottom: 10px;">0.0000</div>
+            <button class="claim-btn" onclick="claimMining()">استلام PG ⬇</button>
+        </div>
+    </div>
 
     <script>
         let gold = 0;
+        let pending = 0;
+        
+        // التعدين: 100 في الساعة يعني 0.027 كل ثانية تقريباً
+        setInterval(() => {
+            pending += (100 / 3600); 
+            document.getElementById('pending-balance').innerText = pending.toFixed(4);
+        }, 1000);
+
         function addGold() {
             gold++;
             document.getElementById('balance').innerText = gold + " PG";
+        }
+
+        function claimMining() {
+            gold += Math.floor(pending);
+            pending = 0;
+            document.getElementById('balance').innerText = gold + " PG";
+            document.getElementById('pending-balance').innerText = "0.0000";
         }
     </script>
 </body>
