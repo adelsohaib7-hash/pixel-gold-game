@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PixcelGold</title>
     <style>
-        body { margin: 0; background-color: #0a0a0f; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; }
+        body { margin: 0; background-color: #0a0a0f; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
         .screen { display: none; flex: 1; padding: 20px; align-items: center; justify-content: center; flex-direction: column; }
         .screen.active { display: flex; }
         
-        /* دائرة العداد */
         .circle { width: 180px; height: 180px; border-radius: 50%; border: 4px solid #ffd700; display: flex; align-items: center; justify-content: center; font-size: 30px; margin: 20px 0; background: #1a1a2e; }
         
-        .nav { height: 60px; background: #1a1a2e; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #333; position: fixed; bottom: 0; width: 100%; }
+        /* القائمة السفلية بـ 4 خانات */
+        .nav { height: 70px; background: #1a1a2e; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #333; }
         .nav-item { cursor: pointer; text-align: center; font-size: 12px; }
         
         button { padding: 15px 30px; background: #ffd700; border: none; border-radius: 10px; cursor: pointer; color: #000; font-weight: bold; font-size: 18px; }
@@ -27,11 +27,52 @@
         <button id="mine-btn" onclick="startMining()">بدء التعدين</button>
     </div>
 
-    <div id="screen-tasks" class="screen"><h2>📋 المهام</h2></div>
-    <div id="screen-friends" class="screen"><h2>👥 الأصدقاء</h2></div>
-    <div id="screen-wallet" class="screen"><h2>💰 المحفظة</h2></div>
+    <div id="screen-tasks" class="screen"><h2>📋 المهام</h2><p>لا توجد مهام حالياً</p></div>
+
+    <div id="screen-friends" class="screen"><h2>👥 الأصدقاء</h2><button onclick="alert('تم نسخ رابط الدعوة')">دعوة صديق</button></div>
+
+    <div id="screen-wallet" class="screen"><h2>💰 المحفظة</h2><input type="text" placeholder="عنوان المحفظة..."><button>حفظ</button></div>
 
     <div class="nav">
         <div class="nav-item" onclick="showScreen('wallet')">💰<br>المحفظة</div>
         <div class="nav-item" onclick="showScreen('friends')">👥<br>الأصدقاء</div>
-        <div class="nav-item" onclick="showScreen('
+        <div class="nav-item" onclick="showScreen('tasks')">📋<br>المهام</div>
+        <div class="nav-item" onclick="showScreen('home')">🏠<br>الرئيسية</div>
+    </div>
+
+    <script>
+        let b = 1.40;
+        let timeLeft = 10;
+
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('screen-' + id).classList.add('active');
+        }
+
+        function startMining() {
+            const btn = document.getElementById('mine-btn');
+            btn.disabled = true;
+            btn.innerText = "جاري التعدين...";
+            let timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').innerText = "00:" + (timeLeft < 10 ? "0" : "") + timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    btn.innerText = "جمع الأرباح";
+                    btn.disabled = false;
+                    btn.onclick = claim;
+                }
+            }, 1000);
+        }
+
+        function claim() {
+            b += 1.0;
+            document.getElementById('balance').innerText = b.toFixed(2);
+            document.getElementById('mine-btn').innerText = "بدء التعدين";
+            document.getElementById('mine-btn').onclick = startMining;
+            document.getElementById('timer').innerText = "00:00";
+            timeLeft = 10;
+        }
+    </script>
+</body>
+</html>
