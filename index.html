@@ -2,92 +2,66 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PixcelGold</title>
     <style>
-        body { margin: 0; background-color: #0a0a0f; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-        
-        /* الشاشات */
+        body { margin: 0; background-color: #0a0a0f; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; }
         .screen { display: none; flex: 1; padding: 20px; align-items: center; justify-content: center; flex-direction: column; }
         .screen.active { display: flex; }
         
-        /* عناصر الواجهة */
-        .balance-container { text-align: center; margin-bottom: 30px; }
-        .balance-text { font-size: 18px; color: #aaa; }
-        .balance-value { font-size: 32px; color: #ffd700; font-weight: bold; }
+        /* تصميم دائرة التعدين */
+        .circle { width: 200px; height: 200px; border-radius: 50%; border: 4px solid #ffd700; display: flex; align-items: center; justify-content: center; font-size: 50px; margin: 20px 0; cursor: pointer; background: #1a1a2e; }
         
-        .clicker-circle { width: 180px; height: 180px; border-radius: 50%; background: radial-gradient(circle, #1a1a2e, #0a0a0f); border: 4px solid #ffd700; display: flex; align-items: center; justify-content: center; font-size: 50px; cursor: pointer; box-shadow: 0 0 20px rgba(255, 215, 0, 0.2); transition: transform 0.1s; }
-        .clicker-circle:active { transform: scale(0.95); }
-
         /* القائمة السفلية */
-        .nav { height: 75px; background: #0f0f1a; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #333; }
-        .nav-item { cursor: pointer; text-align: center; color: #aaa; font-size: 12px; }
-        .nav-item.active { color: #ffd700; }
-
-        /* المحفظة والمهام */
-        input { width: 85%; padding: 15px; border-radius: 10px; border: none; background: #1a1a2e; color: white; margin-bottom: 15px; text-align: center; }
-        button { padding: 12px 40px; background: #ffd700; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; color: #000; }
-        .task-list { width: 100%; max-width: 300px; }
-        .task-item { background: #1a1a2e; padding: 15px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .nav { height: 60px; background: #1a1a2e; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #333; }
+        .nav-item { cursor: pointer; text-align: center; font-size: 14px; }
+        
+        input { width: 80%; padding: 10px; margin: 10px 0; border-radius: 5px; border: none; }
+        button { padding: 10px 20px; background: #ffd700; border: none; border-radius: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <!-- الشاشة الرئيسية -->
+    <!-- الرئيسية (التعدين) -->
     <div id="screen-home" class="screen active">
-        <div class="balance-container">
-            <div class="balance-text">رصيدك الحالي</div>
-            <div class="balance-value" id="total-balance">0.00</div>
-        </div>
-        <div class="clicker-circle" id="clicker">P</div>
+        <p>رصيدك الحالي</p>
+        <h1 id="balance">1.40</h1>
+        <div class="circle" onclick="mine()">P</div>
+        <button onclick="invite()">دعوة صديق</button>
     </div>
 
-    <!-- شاشة المهام -->
+    <!-- المهام -->
     <div id="screen-tasks" class="screen">
         <h2>قائمة المهام</h2>
-        <div class="task-list">
-            <div class="task-item">اشترك في القناة <span>+50</span></div>
-            <div class="task-item">تابعنا على تويتر <span>+30</span></div>
-        </div>
+        <p>اشترك في القناة واحصل على 50 Pixcel</p>
     </div>
 
-    <!-- شاشة المحفظة -->
+    <!-- المحفظة -->
     <div id="screen-wallet" class="screen">
-        <h2>محفظة PixcelGold</h2>
-        <input type="text" id="wallet-address" placeholder="عنوان محفظة (USDT/TON)">
-        <button onclick="withdraw()">طلب سحب الأرباح</button>
-        <p id="status"></p>
+        <h2>المحفظة</h2>
+        <input type="text" id="wallet" placeholder="عنوان المحفظة...">
+        <button onclick="alert('تم حفظ العنوان')">حفظ المحفظة</button>
     </div>
 
     <!-- القائمة السفلية -->
     <div class="nav">
-        <div class="nav-item active" id="nav-home" onclick="showScreen('home')">🏠<br>الرئيسية</div>
-        <div class="nav-item" id="nav-tasks" onclick="showScreen('tasks')">📋<br>المهام</div>
-        <div class="nav-item" id="nav-wallet" onclick="showScreen('wallet')">💰<br>المحفظة</div>
+        <div class="nav-item" onclick="showScreen('wallet')">💰 المحفظة</div>
+        <div class="nav-item" onclick="showScreen('tasks')">📋 المهام</div>
+        <div class="nav-item" onclick="showScreen('home')">🏠 الرئيسية</div>
     </div>
 
     <script>
-        let balance = 0.00;
-        
+        let b = 1.40;
         function showScreen(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById('screen-' + id).classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById('nav-' + id).classList.add('active');
         }
-
-        document.getElementById('clicker').onclick = () => {
-            balance += 0.1;
-            document.getElementById('total-balance').innerText = balance.toFixed(2);
-        };
-
-        function withdraw() {
-            const addr = document.getElementById('wallet-address').value;
-            if(addr.length > 10) {
-                document.getElementById('status').innerText = "✅ تم تقديم طلب السحب بنجاح";
-            } else {
-                document.getElementById('status').innerText = "⚠️ يرجى إدخال عنوان محفظة صحيح";
-            }
+        function mine() {
+            b += 0.1;
+            document.getElementById('balance').innerText = b.toFixed(2);
+        }
+        function invite() {
+            alert("رابط الدعوة الخاص بك: t.me/PixcelGold_bot?start=ref123");
         }
     </script>
 </body>
