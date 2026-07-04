@@ -9,17 +9,20 @@
         .screen { display: none; flex: 1; padding: 20px; align-items: center; justify-content: center; flex-direction: column; overflow-y: auto; }
         .screen.active { display: flex; }
         
-        .header-balance { font-size: 28px; font-weight: bold; color: #ffd700; margin-bottom: 10px; }
+        .header-balance { font-size: 32px; font-weight: bold; color: #ffd700; margin-bottom: 20px; }
         
-        .coin { width: 160px; height: 160px; background: radial-gradient(circle, #ffd700, #b8860b); border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: bold; color: #000; padding: 10px; box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); }
-        .click-note { color: #888; font-size: 14px; margin-bottom: 20px; }
+        /* دائرة الضغط */
+        .coin { width: 180px; height: 180px; background: radial-gradient(circle, #ffd700, #b8860b); border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: bold; color: #000; padding: 15px; box-shadow: 0 0 20px rgba(255, 215, 0, 0.4); }
+        .click-note { color: #888; font-size: 14px; margin: 15px 0; }
 
-        .mining-area { background: #252525; padding: 20px; border-radius: 15px; width: 85%; border: 1px solid #444; text-align: center; }
-        .mining-rate { color: #00ff00; font-size: 14px; margin-bottom: 5px; }
-        .claim-btn { width: 100%; padding: 15px; background: #007bff; border: none; border-radius: 10px; color: white; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .claim-btn:disabled { background: #555; cursor: not-allowed; }
-        .note { font-size: 12px; color: #888; margin-top: 10px; }
+        /* منطقة التعدين التلقائي */
+        .mining-area { background: #252525; padding: 20px; border-radius: 15px; width: 90%; border: 1px solid #444; text-align: center; }
+        .mining-rate { color: #00ff00; font-size: 14px; margin-bottom: 10px; }
+        .claim-btn { width: 100%; padding: 15px; background: #007bff; border: none; border-radius: 10px; color: white; font-weight: bold; cursor: pointer; }
+        .claim-btn:disabled { background: #444; cursor: not-allowed; color: #888; }
+        .note { font-size: 12px; color: #aaa; margin-top: 10px; }
 
+        /* القائمة السفلية */
         .nav { height: 70px; background: #0f0f1a; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #333; }
         .nav-item { cursor: pointer; text-align: center; font-size: 12px; color: #aaa; }
     </style>
@@ -27,12 +30,13 @@
 <body>
 
     <div id="screen-home" class="screen active">
-        <div class="header-balance" id="balance">0 PG</div>
+        <div class="header-balance" id="balance">PG 0</div>
         <div class="coin" onclick="addGold()">اضغط لربح PG</div>
         <div class="click-note">1 PG لكل ضغطة</div>
+
         <div class="mining-area">
             <div class="mining-rate">معدل التعدين: 100 PG / ساعة</div>
-            <div id="pending-balance" style="font-size: 24px;">0.0000</div>
+            <div id="pending-balance" style="font-size: 28px; font-weight: bold;">0.0000</div>
             <button id="claim-btn" class="claim-btn" onclick="claimMining()" disabled>استلام PG ⬇</button>
             <p class="note">* يجب أن يصل رصيد التعدين إلى 10 PG لتتمكن من الاستلام.</p>
         </div>
@@ -45,4 +49,20 @@
     <div class="nav">
         <div class="nav-item" onclick="showScreen('wallet')">💰<br>المحفظة</div>
         <div class="nav-item" onclick="showScreen('friends')">👥<br>الأصدقاء</div>
-        <div class="nav-item" onclick="showScreen('
+        <div class="nav-item" onclick="showScreen('tasks')">📋<br>المهام</div>
+        <div class="nav-item" onclick="showScreen('home')">🏠<br>الرئيسية</div>
+    </div>
+
+    <script>
+        let gold = 0;
+        let pending = 0;
+        
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('screen-' + id).classList.add('active');
+        }
+
+        // التعدين التلقائي
+        setInterval(() => {
+            pending += (100 / 3600); 
+            document.getElementById('
