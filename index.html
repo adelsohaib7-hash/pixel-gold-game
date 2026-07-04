@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixel Gold Game</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .coin {
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, #ffd700, #b8860b);
+            border-radius: 50%;
+            box-shadow: 0 0 20px #ffd700;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+            margin-top: 20px;
+        }
+        .coin:active {
+            transform: scale(0.95);
+        }
+        h1 {
+            font-size: 2.5rem;
+            color: #ffd700;
+            margin: 10px 0;
+        }
+        p {
+            font-size: 1.2rem;
+            color: #aaaaaa;
+        }
+    </style>
+</head>
+<body>
+
+    <p>اضغط على العملة لتجميع الذهب!</p>
+    <h1 id="score">0</h1>
+    <div class="coin" onclick="tapCoin()"></div>
+
+    <script>
+        // تفعيل تطبيق تلغرام المصغر
+        const tg = window.Telegram.WebApp;
+        tg.expand(); // تمديد التطبيق ليملأ الشاشة
+
+        let count = 0;
+        const scoreElement = document.getElementById('score');
+
+        function tapCoin() {
+            count++;
+            scoreElement.innerText = count;
+            
+            // إحداث اهتزاز خفيف في الهاتف عند النقر لو مدعوم
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('medium');
+            }
+        }
+    </script>
+</body>
+</html>
