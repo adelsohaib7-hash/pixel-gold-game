@@ -1,29 +1,46 @@
-# كود هيكلي بسيط لبوت تعدين وهمي (Python)
-from telegram import Update
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
-import time
+import logging
+from aiogram import Bot, Dispatcher, types, F
+from aiogram.filters import Command
+from aiogram.types import Message
+import sqlite3
+import asyncio
 
-# قاعدة بيانات وهمية في الذاكرة (استبدلها بـ SQLite لاحقاً)
-users_db = {}
+# --- الإعدادات ---
+API_TOKEN = 'ضع_التوكن_الخاص_بك_هنا' # استبدل هذا بتوكن البوت من BotFather
+bot = Bot(token=API_TOKEN)
+dp = Dispatcher()
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("مرحباً! استخدم /mine لبدء التعدين و /balance لرصيدك.")
+# --- إعداد قاعدة البيانات ---
+conn = sqlite3.connect('database.db', check_same_thread=False)
+cursor = conn.cursor()
+cursor.execute('CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY, balance REAL)')
+conn.commit()
 
-async def mine(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = update.effective_user.id
-    current_time = time.time()
-    
-    # التحقق مما إذا كان المستخدم قد عدن سابقاً
-    last_mine = users_db.get(user_id, 0)
-    
-    if current_time - last_mine > 3600: # انتظار ساعة واحدة (3600 ثانية)
-        users_db[user_id] = current_time
-        await update.message.reply_text("تمت إضافة 10 عملات PG إلى رصيدك!")
-    else:
-        await update.message.reply_text("يجب الانتظار ساعة قبل التعدين مرة أخرى.")
+# --- الدوال ---
+@dp.message(Command("start"))
+async def start(message: Message):
+    user_id = message.from_user.id
+    cursor.execute('INSERT OR IGNORE INTO users (user_id, balance) VALUES (?, ?)', (user_id, 0.0))
+    conn.commit()
+    await message.answer("أهلاً بك في بوت تعدين PG! استخدم /mine للتعدين و /balance لرؤية رصيدك.")
 
-# إعداد البوت
-app = ApplicationBuilder().token("YOUR_TOKEN_HERE").build()
-app.add_handler(CommandHandler("start", start))
-app.add_handler(CommandHandler("mine", mine))
-app.run_polling()
+@dp.message(Command("mine"))
+async def mine(message: Message):
+    user_id = message.from_user.id
+    cursor.execute('UPDATE users SET balance = balance + 1.0 WHERE user_id = ?', (user_id,))
+    conn.commit()
+    await message.answer("تم تعدين 1.0 عملة PG بنجاح!")
+
+@dp.message(Command("balance"))
+async def balance(message: Message):
+    user_id = message.from_user.id
+    cursor.execute('SELECT balance FROM users WHERE user_id = ?', (user_id,))
+    res = cursor.fetchone()
+    await message.answer(f"رصيدك الحالي هو: {res[0]} PG")
+
+# --- تشغيل البوت ---
+async def main():
+    await dp.start_polling(bot)
+
+if __name__ == '__main__':
+    asyncio.run(main())
