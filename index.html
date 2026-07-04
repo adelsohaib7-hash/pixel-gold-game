@@ -1,42 +1,13 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pixel Gold Mining</title>
-    <style>
-        body { margin: 0; background-color: #121212; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center; }
-        .balance { font-size: 32px; color: #ffd700; margin-bottom: 20px; }
-        .pool { font-size: 20px; margin-bottom: 20px; }
-        button { padding: 15px 30px; font-size: 18px; border-radius: 10px; border: none; background: #00e676; cursor: pointer; }
-    </style>
-</head>
-<body>
-    <div class="balance">الرصيد: <span id="total">0</span></div>
-    <div class="pool">المعدن: <span id="pool">0</span></div>
-    <button id="claim">جمع الأرباح</button>
-
-    <script>
-        let total = parseFloat(localStorage.getItem('total')) || 0;
-        let pool = parseFloat(localStorage.getItem('pool')) || 0;
-        
-        setInterval(() => {
-            pool += 0.01;
-            document.getElementById('pool').innerText = pool.toFixed(2);
-            localStorage.setItem('pool', pool);
-        }, 1000);
-
-        document.getElementById('claim').onclick = () => {
-            total += pool;
-            pool = 0;
-            document.getElementById('total').innerText = total.toFixed(2);
-            document.getElementById('pool').innerText = '0';
-            localStorage.setItem('total', total);
-            localStorage.setItem('pool', pool);
-        };
-        
-        document.getElementById('total').innerText = total.toFixed(2);
-        document.getElementById('pool').innerText = pool.toFixed(2);
-    </script>
-</body>
-</html>
+graph TD
+    A[الواجهة الرئيسية] --> B(لوحة الرصيد والمستوى)
+    A --> C(الدائرة المركزية للتعدين)
+    A --> D(شريط الطاقة التلقائي)
+    A --> E(بطاقة التعدين المؤقت + زر الاستلام)
+    A --> F(القائمة السفلية للتنقل)
+    
+    F --> G(الرئيسية)
+    F --> H(المهام)
+    F --> I(دعوة الأصدقاء)
+    F --> J(المحفظة)
+    
+    B --> K[ربط قاعدة البيانات: حفظ الرصيد برقم الـ ID]
