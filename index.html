@@ -2,70 +2,41 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pixel Gold Mining</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            user-select: none;
-            -webkit-user-select: none;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #121212;
-            color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
-        }
-        .container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            text-align: center;
-        }
-        .screen {
-            display: none;
-            width: 100%;
-            flex-direction: column;
-            align-items: center;
-        }
-        .screen.active {
-            display: flex;
-        }
-        /* الرصيد الأساسي */
-        .balance-container {
-            margin-bottom: 20px;
-        }
-        .balance-label {
-            font-size: 14px;
-            color: #aaaaaa;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .balance-value {
-            font-size: 38px;
-            font-weight: bold;
-            color: #ffd700;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-            margin-top: 5px;
-        }
-        /* جهاز التعدين */
-        .mining-machine {
-            background: radial-gradient(circle, #1e1e1e 0%, #151515 100%);
-            border: 2px solid #333;
-            border-radius: 50%;
-            width: 200px;
-            height: 200px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin: 30px 0;
-            position: relative
+        body { margin: 0; background-color: #121212; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center; }
+        .balance { font-size: 32px; color: #ffd700; margin-bottom: 20px; }
+        .pool { font-size: 20px; margin-bottom: 20px; }
+        button { padding: 15px 30px; font-size: 18px; border-radius: 10px; border: none; background: #00e676; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="balance">الرصيد: <span id="total">0</span></div>
+    <div class="pool">المعدن: <span id="pool">0</span></div>
+    <button id="claim">جمع الأرباح</button>
+
+    <script>
+        let total = parseFloat(localStorage.getItem('total')) || 0;
+        let pool = parseFloat(localStorage.getItem('pool')) || 0;
+        
+        setInterval(() => {
+            pool += 0.01;
+            document.getElementById('pool').innerText = pool.toFixed(2);
+            localStorage.setItem('pool', pool);
+        }, 1000);
+
+        document.getElementById('claim').onclick = () => {
+            total += pool;
+            pool = 0;
+            document.getElementById('total').innerText = total.toFixed(2);
+            document.getElementById('pool').innerText = '0';
+            localStorage.setItem('total', total);
+            localStorage.setItem('pool', pool);
+        };
+        
+        document.getElementById('total').innerText = total.toFixed(2);
+        document.getElementById('pool').innerText = pool.toFixed(2);
+    </script>
+</body>
+</html>
