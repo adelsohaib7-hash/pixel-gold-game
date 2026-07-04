@@ -2,29 +2,57 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PixelGold</title>
+    <title>PixelGold Pro</title>
     <style>
-        body { margin: 0; background-color: #1a1a1a; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        body { margin: 0; background: #1a1a1a; color: #fff; font-family: sans-serif; height: 100vh; display: flex; flex-direction: column; }
         .screen { display: none; flex: 1; padding: 20px; align-items: center; justify-content: center; flex-direction: column; overflow-y: auto; }
         .screen.active { display: flex; }
-        
-        #main-balance { font-size: 32px; font-weight: bold; color: #ffd700; margin-bottom: 20px; }
-        
-        .coin-button { width: 180px; height: 180px; background: radial-gradient(circle, #ffd700, #b8860b); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #000; font-weight: bold; cursor: pointer; text-align: center; padding: 10px; transition: transform 0.1s; }
-        .coin-button:active { transform: scale(0.95); }
-
-        .mining-area { background: #252525; padding: 20px; border-radius: 15px; width: 90%; margin-top: 20px; text-align: center; border: 1px solid #444; }
-        .claim-btn { width: 100%; padding: 12px; background: #007bff; border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .claim-btn:disabled { background: #555; cursor: not-allowed; }
-        
-        .nav { height: 60px; background: #0f0f1a; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #333; }
-        .nav-item { cursor: pointer; text-align: center; font-size: 12px; color: #aaa; }
+        #balance { font-size: 32px; font-weight: bold; color: #ffd700; }
+        .coin { width: 160px; height: 160px; background: radial-gradient(circle, #ffd700, #b8860b); border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #000; font-weight: bold; text-align: center; margin: 20px 0; }
+        .mining-area { background: #252525; padding: 20px; border-radius: 15px; width: 90%; text-align: center; border: 1px solid #444; }
+        .nav { height: 70px; background: #0f0f1a; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #333; }
+        .nav-item { cursor: pointer; text-align: center; font-size: 12px; }
+        button { padding: 10px 20px; background: #28a745; border: none; border-radius: 5px; color: white; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div id="screen-home" class="screen active">
-        <div id="main-balance">PG 0</div>
-        <div class="coin-button" onclick="addGold()">اضغط لربح PG</div>
-        <div style="margin-top:1
+    <div id="home" class="screen active">
+        <div id="balance">PG 0</div>
+        <div class="coin" onclick="addGold()">اضغط لربح PG</div>
+        <div class="mining-area">
+            <div id="pending">تعدين: 0.0000</div>
+            <button id="claim" onclick="claim()" disabled>استلام PG</button>
+        </div>
+    </div>
+
+    <div id="tasks" class="screen">
+        <h2>📋 المهام</h2>
+        <div style="background:#252525; padding:15px; width:90%; border-radius:10px;">
+            <strong>انضم للقناة</strong>
+            <button onclick="doTask(this, 500)">إتمام (+500)</button>
+        </div>
+    </div>
+
+    <div class="nav">
+        <div class="nav-item" onclick="show('home')">🏠 رئيسية</div>
+        <div class="nav-item" onclick="show('tasks')">📋 مهام</div>
+    </div>
+
+    <script>
+        let gold = 0; let pending = 0;
+        function show(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+        function addGold() { gold++; document.getElementById('balance').innerText = "PG " + gold; }
+        setInterval(() => {
+            pending += (100 / 3600);
+            document.getElementById('pending').innerText = "تعدين: " + pending.toFixed(4);
+            document.getElementById('claim').disabled = (pending < 10);
+        }, 1000);
+        function claim() { gold += Math.floor(pending); pending = 0; document.getElementById('balance').innerText = "PG " + gold; }
+        function doTask(btn, reward) { gold += reward; document.getElementById('balance').innerText = "PG " + gold; btn.disabled=true; btn.innerText="تم"; }
+    </script>
+</body>
+</html>
