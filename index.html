@@ -1,13 +1,64 @@
-graph TD
-    A[الواجهة الرئيسية] --> B(لوحة الرصيد والمستوى)
-    A --> C(الدائرة المركزية للتعدين)
-    A --> D(شريط الطاقة التلقائي)
-    A --> E(بطاقة التعدين المؤقت + زر الاستلام)
-    A --> F(القائمة السفلية للتنقل)
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pixel Gold</title>
+    <style>
+        body { margin: 0; background-color: #0a0a0f; color: #fff; font-family: sans-serif; height: 100vh; display: flex; flex-direction: column; }
+        .header { padding: 20px; text-align: center; }
+        .balance { font-size: 36px; font-weight: bold; color: #fff; }
+        .mining-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .circle { width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(circle, #2a2a3a 0%, #0a0a0f 100%); border: 4px solid #ffd700; display: flex; align-items: center; justify-content: center; font-size: 60px; box-shadow: 0 0 20px rgba(255, 215, 0, 0.2); }
+        .claim-card { background: #1a1a2e; padding: 20px; width: 90%; border-radius: 15px; margin-bottom: 20px; text-align: center; border: 1px solid #333; }
+        .btn-claim { background: #007bff; color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; font-size: 16px; margin-top: 10px; }
+        .nav { height: 70px; background: #0f0f1a; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #333; }
+        .nav-item { text-align: center; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>الرصيد الإجمالي</div>
+        <div class="balance" id="total">0.00</div>
+    </div>
     
-    F --> G(الرئيسية)
-    F --> H(المهام)
-    F --> I(دعوة الأصدقاء)
-    F --> J(المحفظة)
-    
-    B --> K[ربط قاعدة البيانات: حفظ الرصيد برقم الـ ID]
+    <div class="mining-area">
+        <div class="circle">P</div>
+    </div>
+
+    <div class="claim-card">
+        <div>في انتظار الاستلام</div>
+        <div id="pool" style="font-size: 24px; font-weight: bold; margin: 10px 0;">0.0000</div>
+        <button class="btn-claim" id="btn-claim">استلام PXC</button>
+    </div>
+
+    <div class="nav">
+        <div class="nav-item">🏠<br>الرئيسية</div>
+        <div class="nav-item">📋<br>المهام</div>
+        <div class="nav-item">👥<br>دعوة</div>
+    </div>
+
+    <script>
+        let total = parseFloat(localStorage.getItem('total')) || 0;
+        let pool = parseFloat(localStorage.getItem('pool')) || 0;
+
+        setInterval(() => {
+            pool += 0.0005;
+            document.getElementById('pool').innerText = pool.toFixed(4);
+            localStorage.setItem('pool', pool);
+        }, 1000);
+
+        document.getElementById('btn-claim').onclick = () => {
+            total += pool;
+            pool = 0;
+            document.getElementById('total').innerText = total.toFixed(2);
+            document.getElementById('pool').innerText = '0.0000';
+            localStorage.setItem('total', total);
+            localStorage.setItem('pool', pool);
+        };
+
+        document.getElementById('total').innerText = total.toFixed(2);
+        document.getElementById('pool').innerText = pool.toFixed(4);
+    </script>
+</body>
+</html>
