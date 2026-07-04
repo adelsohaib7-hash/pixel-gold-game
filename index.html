@@ -1,46 +1,37 @@
-import logging
-from aiogram import Bot, Dispatcher, types, F
-from aiogram.filters import Command
-from aiogram.types import Message
-import sqlite3
-import asyncio
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>PixelGold</title>
+    <style>
+        body { margin: 0; background: #121212; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
+        #user-id { color: #888; font-size: 14px; margin-bottom: 20px; }
+        #balance { font-size: 40px; font-weight: bold; color: #ffd700; margin-bottom: 30px; }
+        .coin { width: 180px; height: 180px; background: #ffd700; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #000; font-weight: bold; cursor: pointer; transition: 0.1s; }
+        .coin:active { transform: scale(0.95); }
+    </style>
+</head>
+<body>
 
-# --- الإعدادات ---
-API_TOKEN = 'ضع_التوكن_الخاص_بك_هنا' # استبدل هذا بتوكن البوت من BotFather
-bot = Bot(token=API_TOKEN)
-dp = Dispatcher()
+    <div id="user-id">جاري التحميل...</div>
+    <div id="balance">PG 0</div>
+    <div class="coin" onclick="addGold()">اضغط</div>
 
-# --- إعداد قاعدة البيانات ---
-conn = sqlite3.connect('database.db', check_same_thread=False)
-cursor = conn.cursor()
-cursor.execute('CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY, balance REAL)')
-conn.commit()
+    <script>
+        // 1. التعامل مع الـ ID
+        let userId = localStorage.getItem('pid') || 'PG-' + Date.now();
+        localStorage.setItem('pid', userId);
+        document.getElementById('user-id').innerText = "ID: " + userId;
 
-# --- الدوال ---
-@dp.message(Command("start"))
-async def start(message: Message):
-    user_id = message.from_user.id
-    cursor.execute('INSERT OR IGNORE INTO users (user_id, balance) VALUES (?, ?)', (user_id, 0.0))
-    conn.commit()
-    await message.answer("أهلاً بك في بوت تعدين PG! استخدم /mine للتعدين و /balance لرؤية رصيدك.")
+        // 2. التعامل مع الرصيد
+        let gold = parseInt(localStorage.getItem('gold') || 0);
+        document.getElementById('balance').innerText = "PG " + gold;
 
-@dp.message(Command("mine"))
-async def mine(message: Message):
-    user_id = message.from_user.id
-    cursor.execute('UPDATE users SET balance = balance + 1.0 WHERE user_id = ?', (user_id,))
-    conn.commit()
-    await message.answer("تم تعدين 1.0 عملة PG بنجاح!")
-
-@dp.message(Command("balance"))
-async def balance(message: Message):
-    user_id = message.from_user.id
-    cursor.execute('SELECT balance FROM users WHERE user_id = ?', (user_id,))
-    res = cursor.fetchone()
-    await message.answer(f"رصيدك الحالي هو: {res[0]} PG")
-
-# --- تشغيل البوت ---
-async def main():
-    await dp.start_polling(bot)
-
-if __name__ == '__main__':
-    asyncio.run(main())
+        function addGold() {
+            gold++;
+            localStorage.setItem('gold', gold);
+            document.getElementById('balance').innerText = "PG " + gold;
+        }
+    </script>
+</body>
+</html>
