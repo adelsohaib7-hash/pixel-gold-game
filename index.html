@@ -2,86 +2,58 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>PixelGold Pro Final</title>
+    <title>PixelGold Pro - System</title>
     <style>
-        body { margin: 0; background: #1a1a1a; color: #fff; font-family: sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        body { margin: 0; background: #1a1a1a; color: #fff; font-family: sans-serif; height: 100vh; display: flex; flex-direction: column; }
         .screen { display: none; flex: 1; padding: 20px; align-items: center; justify-content: center; flex-direction: column; overflow-y: auto; }
         .screen.active { display: flex; }
         
-        /* القسم الرئيسي */
-        #balance { font-size: 32px; font-weight: bold; color: #ffd700; margin-bottom: 10px; }
-        .coin { width: 160px; height: 160px; background: radial-gradient(circle, #ffd700, #b8860b); border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #000; font-weight: bold; text-align: center; }
-        .energy-bar-bg { width: 80%; height: 15px; background: #333; border-radius: 10px; margin: 15px 0; overflow: hidden; }
-        #energy-bar { width: 100%; height: 100%; background: #007bff; transition: width 0.2s; }
+        .user-header { background: #333; padding: 10px; width: 100%; text-align: center; font-size: 14px; color: #aaa; border-bottom: 1px solid #444; }
+        #balance { font-size: 32px; font-weight: bold; color: #ffd700; }
+        .coin { width: 160px; height: 160px; background: radial-gradient(circle, #ffd700, #b8860b); border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #000; font-weight: bold; margin: 20px 0; }
         
-        /* التعدين */
-        .mining-area { background: #252525; padding: 15px; border-radius: 15px; width: 90%; text-align: center; border: 1px solid #444; margin-top: 10px; }
-        .claim-btn { width: 100%; padding: 10px; background: #28a745; border: none; border-radius: 5px; color: white; cursor: pointer; }
-        .claim-btn:disabled { background: #555; }
-        
-        /* القائمة */
-        .nav { height: 65px; background: #0f0f1a; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #333; }
+        .nav { height: 60px; background: #0f0f1a; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #333; }
         .nav-item { cursor: pointer; text-align: center; font-size: 12px; }
     </style>
 </head>
 <body>
 
+    <div class="user-header" id="user-id">ID: جاري التحميل...</div>
+
     <div id="home" class="screen active">
         <div id="balance">PG 0</div>
         <div class="coin" onclick="addGold()">اضغط</div>
-        <div class="energy-bar-bg"><div id="energy-bar"></div></div>
-        <div id="timer">جاهز للضغط (6س)</div>
-        <div class="mining-area">
-            <div id="pending">تعدين: 0.0000</div>
-            <button id="claim" class="claim-btn" onclick="claim()" disabled>استلام PG</button>
-        </div>
-    </div>
-
-    <div id="tasks" class="screen">
-        <h2>📋 المهام</h2>
-        <div style="background:#252525; padding:15px; width:90%; border-radius:10px;">
-            <strong>انضم للقناة</strong>
-            <button onclick="doTask(this, 500)">إتمام (+500)</button>
-        </div>
     </div>
 
     <div class="nav">
         <div class="nav-item" onclick="show('home')">🏠 رئيسية</div>
-        <div class="nav-item" onclick="show('tasks')">📋 مهام</div>
+        <div class="nav-item" onclick="resetData()">🔄 مسح</div>
     </div>
 
     <script>
-        let gold = 0; let energy = 100; let pending = 0; let timeLeft = 21600; let timerRunning = false;
+        // 1. نظام الهوية (ID)
+        let userId = localStorage.getItem('userId') || 'PG-' + Math.floor(Math.random() * 900000 + 100000);
+        localStorage.setItem('userId', userId);
+        document.getElementById('user-id').innerText = "ID: " + userId;
+
+        // 2. نظام الحفظ (Load & Save)
+        let gold = parseInt(localStorage.getItem('gold')) || 0;
+        document.getElementById('balance').innerText = "PG " + gold;
+
+        function addGold() {
+            gold++;
+            document.getElementById('balance').innerText = "PG " + gold;
+            localStorage.setItem('gold', gold); // حفظ تلقائي
+        }
 
         function show(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
         
-        function addGold() {
-            if (energy > 0) {
-                gold++; energy--;
-                document.getElementById('balance').innerText = "PG " + gold;
-                document.getElementById('energy-bar').style.width = energy + "%";
-                if (!timerRunning && energy < 100) startTimer();
+        function resetData() {
+            if(confirm("هل أنت متأكد من مسح البيانات؟")) {
+                localStorage.clear();
+                location.reload();
             }
         }
-
-        function startTimer() {
-            timerRunning = true;
-            let interval = setInterval(() => {
-                timeLeft--;
-                let h = Math.floor(timeLeft/3600); let m = Math.floor((timeLeft%3600)/60);
-                document.getElementById('timer').innerText = `استعادة الطاقة بعد: ${h}س ${m}د`;
-                if (timeLeft <= 0) { clearInterval(interval); energy = 100; timeLeft = 21600; timerRunning = false; document.getElementById('energy-bar').style.width = "100%"; }
-            }, 1000);
-        }
-
-        setInterval(() => {
-            pending += (100 / 3600);
-            document.getElementById('pending').innerText = "تعدين: " + pending.toFixed(4);
-            document.getElementById('claim').disabled = (pending < 10);
-        }, 1000);
-
-        function claim() { gold += Math.floor(pending); pending = 0; document.getElementById('balance').innerText = "PG " + gold; }
-        function doTask(btn, reward) { gold += reward; document.getElementById('balance').innerText = "PG " + gold; btn.disabled=true; btn.innerText="تم"; }
     </script>
 </body>
 </html>
