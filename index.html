@@ -16,7 +16,8 @@
             justify-content: center; 
             height: 100vh; 
         }
-        #balance { font-size: 60px; font-weight: bold; color: #ffd700; margin: 20px 0; }
+        .title { font-size: 20px; margin-bottom: 10px; color: #aaa; }
+        #balance { font-size: 50px; font-weight: bold; color: #ffd700; margin: 10px 0; }
         .coin { 
             width: 200px; 
             height: 200px; 
@@ -31,15 +32,15 @@
 </head>
 <body>
 
-    <p>اضغط على العملة لتجميع الذهب!</p>
-    <div id="balance">0</div>
+    <div class="title">رصيدك من PixelGold</div>
+    <div id="balance">0 PG</div>
     <div class="coin" onclick="addGold()"></div>
 
     <script>
         let gold = 0;
         function addGold() {
             gold++;
-            document.getElementById('balance').innerText = gold;
+            document.getElementById('balance').innerText = gold + " PG";
         }
     </script>
 </body>
