@@ -9,65 +9,29 @@
         .screen { display: none; flex: 1; padding: 20px; align-items: center; justify-content: center; flex-direction: column; }
         .screen.active { display: flex; }
         
-        .circle { width: 200px; height: 200px; border-radius: 50%; border: 4px solid #ffd700; display: flex; align-items: center; justify-content: center; font-size: 50px; margin: 20px 0; cursor: pointer; background: #1a1a2e; }
+        /* دائرة العداد */
+        .circle { width: 180px; height: 180px; border-radius: 50%; border: 4px solid #ffd700; display: flex; align-items: center; justify-content: center; font-size: 30px; margin: 20px 0; background: #1a1a2e; }
         
-        /* القائمة السفلية بـ 4 خانات */
         .nav { height: 60px; background: #1a1a2e; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #333; position: fixed; bottom: 0; width: 100%; }
         .nav-item { cursor: pointer; text-align: center; font-size: 12px; }
         
-        input { width: 80%; padding: 10px; margin: 10px 0; border-radius: 5px; border: none; }
-        button { padding: 10px 20px; background: #ffd700; border: none; border-radius: 5px; cursor: pointer; color: #000; font-weight: bold; }
+        button { padding: 15px 30px; background: #ffd700; border: none; border-radius: 10px; cursor: pointer; color: #000; font-weight: bold; font-size: 18px; }
     </style>
 </head>
 <body>
 
-    <!-- الرئيسية -->
     <div id="screen-home" class="screen active">
         <p>رصيدك الحالي</p>
         <h1 id="balance">1.40</h1>
-        <div class="circle" onclick="mine()">P</div>
+        <div class="circle" id="timer">00:00</div>
+        <button id="mine-btn" onclick="startMining()">بدء التعدين</button>
     </div>
 
-    <!-- المهام -->
-    <div id="screen-tasks" class="screen">
-        <h2>قائمة المهام</h2>
-        <p>قم بالمهام اليومية لزيادة رصيدك</p>
-    </div>
+    <div id="screen-tasks" class="screen"><h2>📋 المهام</h2></div>
+    <div id="screen-friends" class="screen"><h2>👥 الأصدقاء</h2></div>
+    <div id="screen-wallet" class="screen"><h2>💰 المحفظة</h2></div>
 
-    <!-- الأصدقاء -->
-    <div id="screen-friends" class="screen">
-        <h2>الأصدقاء</h2>
-        <button onclick="invite()">دعوة صديق جديد</button>
-    </div>
-
-    <!-- المحفظة -->
-    <div id="screen-wallet" class="screen">
-        <h2>المحفظة</h2>
-        <input type="text" id="wallet" placeholder="عنوان محفظة...">
-        <button onclick="alert('تم حفظ العنوان')">حفظ المحفظة</button>
-    </div>
-
-    <!-- القائمة السفلية بـ 4 خانات -->
     <div class="nav">
         <div class="nav-item" onclick="showScreen('wallet')">💰<br>المحفظة</div>
         <div class="nav-item" onclick="showScreen('friends')">👥<br>الأصدقاء</div>
-        <div class="nav-item" onclick="showScreen('tasks')">📋<br>المهام</div>
-        <div class="nav-item" onclick="showScreen('home')">🏠<br>الرئيسية</div>
-    </div>
-
-    <script>
-        let b = 1.40;
-        function showScreen(id) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById('screen-' + id).classList.add('active');
-        }
-        function mine() {
-            b += 0.1;
-            document.getElementById('balance').innerText = b.toFixed(2);
-        }
-        function invite() {
-            alert("رابط الدعوة الخاص بك تم نسخه!");
-        }
-    </script>
-</body>
-</html>
+        <div class="nav-item" onclick="showScreen('
