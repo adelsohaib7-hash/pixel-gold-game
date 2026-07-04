@@ -2,58 +2,40 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>PixelGold Pro - System</title>
+    <title>PixelGold - Stable</title>
     <style>
-        body { margin: 0; background: #1a1a1a; color: #fff; font-family: sans-serif; height: 100vh; display: flex; flex-direction: column; }
-        .screen { display: none; flex: 1; padding: 20px; align-items: center; justify-content: center; flex-direction: column; overflow-y: auto; }
-        .screen.active { display: flex; }
-        
-        .user-header { background: #333; padding: 10px; width: 100%; text-align: center; font-size: 14px; color: #aaa; border-bottom: 1px solid #444; }
-        #balance { font-size: 32px; font-weight: bold; color: #ffd700; }
-        .coin { width: 160px; height: 160px; background: radial-gradient(circle, #ffd700, #b8860b); border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #000; font-weight: bold; margin: 20px 0; }
-        
-        .nav { height: 60px; background: #0f0f1a; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #333; }
-        .nav-item { cursor: pointer; text-align: center; font-size: 12px; }
+        body { margin: 0; background: #121212; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; }
+        .header { width: 100%; background: #1e1e1e; padding: 10px; text-align: center; border-bottom: 2px solid #333; font-size: 14px; color: #888; }
+        #balance { font-size: 40px; font-weight: bold; color: #ffd700; margin: 20px 0; }
+        .coin { width: 180px; height: 180px; background: #ffd700; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #000; font-weight: bold; cursor: pointer; transition: 0.1s; }
+        .coin:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
 
-    <div class="user-header" id="user-id">ID: جاري التحميل...</div>
-
-    <div id="home" class="screen active">
-        <div id="balance">PG 0</div>
-        <div class="coin" onclick="addGold()">اضغط</div>
-    </div>
-
-    <div class="nav">
-        <div class="nav-item" onclick="show('home')">🏠 رئيسية</div>
-        <div class="nav-item" onclick="resetData()">🔄 مسح</div>
-    </div>
+    <div class="header" id="user-tag">ID: جاري التحميل...</div>
+    <div id="balance">PG 0</div>
+    <div class="coin" onclick="handleTap()">اضغط</div>
 
     <script>
-        // 1. نظام الهوية (ID)
-        let userId = localStorage.getItem('userId') || 'PG-' + Math.floor(Math.random() * 900000 + 100000);
-        localStorage.setItem('userId', userId);
-        document.getElementById('user-id').innerText = "ID: " + userId;
+        // 1. نظام التعريف (ID)
+        let userId = localStorage.getItem('pid') || 'PG-' + Date.now();
+        localStorage.setItem('pid', userId);
+        document.getElementById('user-tag').innerText = "ID: " + userId;
 
-        // 2. نظام الحفظ (Load & Save)
-        let gold = parseInt(localStorage.getItem('gold')) || 0;
-        document.getElementById('balance').innerText = "PG " + gold;
-
-        function addGold() {
-            gold++;
+        // 2. نظام الرصيد
+        let gold = parseInt(localStorage.getItem('gold') || 0);
+        function updateDisplay() {
             document.getElementById('balance').innerText = "PG " + gold;
-            localStorage.setItem('gold', gold); // حفظ تلقائي
         }
 
-        function show(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
-        
-        function resetData() {
-            if(confirm("هل أنت متأكد من مسح البيانات؟")) {
-                localStorage.clear();
-                location.reload();
-            }
+        function handleTap() {
+            gold++;
+            localStorage.setItem('gold', gold);
+            updateDisplay();
         }
+
+        updateDisplay();
     </script>
 </body>
 </html>
