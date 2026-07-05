@@ -23,19 +23,19 @@ function updateScreen() {
     saveData();
 }
 
-// التعدين التلقائي
+// التعدين التلقائي يذهب إلى رصيد التعدين
 setInterval(() => {
     miningPG += ratePerSecond;
     updateScreen();
 }, 1000);
 
-// زيادة بالنقر على الدائرة
+// الضغط على العملة يذهب مباشرة إلى الرصيد الرئيسي
 circle.addEventListener("click", () => {
-    miningPG += 1;
+    totalPG += 1;
     updateScreen();
 });
 
-// استلام الأرباح
+// استلام رصيد التعدين
 claimBtn.addEventListener("click", () => {
     if (miningPG >= 10) {
         totalPG += miningPG;
