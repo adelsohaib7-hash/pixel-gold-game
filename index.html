@@ -2,36 +2,183 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>PixelGold</title>
-    <style>
-        body { margin: 0; background: #121212; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
-        #user-id { color: #888; font-size: 14px; margin-bottom: 20px; }
-        #balance { font-size: 40px; font-weight: bold; color: #ffd700; margin-bottom: 30px; }
-        .coin { width: 180px; height: 180px; background: #ffd700; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #000; font-weight: bold; cursor: pointer; transition: 0.1s; }
-        .coin:active { transform: scale(0.95); }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PixcelGold</title>
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-    <div id="user-id">جاري التحميل...</div>
-    <div id="balance">PG 0</div>
-    <div class="coin" onclick="addGold()">اضغط</div>
+<div class="container">
 
-    <script>
-        // 1. التعامل مع الـ ID
-        let userId = localStorage.getItem('pid') || 'PG-' + Date.now();
-        localStorage.setItem('pid', userId);
-        document.getElementById('user-id').innerText = "ID: " + userId;
+    <h1>PixcelGold</h1>
 
-        // 2. التعامل مع الرصيد
-        let gold = parseInt(localStorage.getItem('gold') || 0);
-        document.getElementById('balance').innerText = "PG " + gold;
+    <div class="pg-title">
+        <span id="pgBalance">PG 39</span>
+    </div>
 
-        function addGold() {
-            gold++;
-            localStorage.setItem('gold', gold);
-            document.getElementById('balance').innerText = "PG " + gold;
-        }
-    </script>
+    <div class="gold-circle"></div>
+
+    <div class="card">
+
+        <p class="green">
+            معدل التعدين:
+            <span id="rate">1.4722</span>
+            PG / 100 ساعة
+        </p>
+
+        <button id="claimBtn" disabled>
+            استلام PG
+        </button>
+
+        <p class="note">
+            يجب أن يصل رصيد التعدين إلى 10 PG لتتمكن من الاستلام.
+        </p>
+
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+
 </body>
-</html>
+</html>*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Tahoma,Arial,sans-serif;
+}
+
+body{
+    background:#111;
+    color:#fff;
+}
+
+.container{
+    width:100%;
+    max-width:420px;
+    margin:auto;
+    padding:20px;
+    text-align:center;
+}
+
+h1{
+    font-size:34px;
+    margin-top:20px;
+    margin-bottom:30px;
+    color:#ffffff;
+}
+
+.pg-title{
+    color:#FFD700;
+    font-size:42px;
+    font-weight:bold;
+    margin-bottom:20px;
+}
+
+.gold-circle{
+    width:230px;
+    height:230px;
+    border-radius:50%;
+    margin:20px auto;
+    background:radial-gradient(circle,#FFD700,#C79A00);
+    box-shadow:0 0 35px rgba(255,215,0,.45);
+}
+
+.card{
+   let totalPG = Number(localStorage.getItem("totalPG")) || 39;
+let miningPG = Number(localStorage.getItem("miningPG")) || 0;
+
+const ratePerSecond = 1.4722 / (100 * 3600);
+
+const balance = document.getElementById("pgBalance");
+const rate = document.getElementById("rate");
+const claimBtn = document.getElementById("claimBtn");
+
+rate.innerText = miningPG.toFixed(4);
+
+function saveData() {
+    localStorage.setItem("totalPG", totalPG);
+    localStorage.setItem("miningPG", miningPG);
+}
+
+function updateScreen() {
+
+    balance.innerText = "PG " + totalPG.toFixed(2);
+
+    rate.innerText = miningPG.toFixed(4);
+
+    if (miningPG >= 10) {
+        claimBtn.disabled = false;
+    } else {
+        claimBtn.disabled = true;
+    }
+
+    saveData();
+}
+
+setInterval(() => {
+
+    miningPG += ratePerSecond;
+
+    updateScreen();
+
+}, 1000);
+
+claimBtn.onclick = () => {
+
+    if (miningPG >= 10) {
+
+        totalPG += miningPG;
+
+        miningPG = 0;
+
+        updateScreen();
+
+        alert("تم استلام الأرباح بنجاح");
+
+    }
+
+};
+
+updateScreen();const circle = document.querySelector(".gold-circle");
+
+let scale = 1;
+let direction = 1;
+
+setInterval(() => {
+
+    if(direction === 1){
+        scale += 0.002;
+
+        if(scale >= 1.06){
+            direction = -1;
+        }
+
+    }else{
+
+        scale -= 0.002;
+
+        if(scale <= 1){
+            direction = 1;
+        }
+
+    }
+
+    circle.style.transform =
+        "scale(" + scale + ") rotate(" + (Date.now()/70 % 360) + "deg)";
+
+},20);const firebaseConfig = {
+    apiKey: "ضع_apiKey_هنا",
+    authDomain: "ضع_authDomain_هنا",
+    projectId: "ضع_projectId_هنا",
+    storageBucket: "ضع_storageBucket_هنا",
+    messagingSenderId: "ضع_messagingSenderId_هنا",
+    appId: "ضع_appId_هنا"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const db = firebase.firestore();
+
+const auth = firebase.auth();
