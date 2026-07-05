@@ -1,28 +1,31 @@
 const circle = document.querySelector(".gold-circle");
 
+let angle = 0;
 let scale = 1;
-let direction = 1;
+let growing = true;
 
 setInterval(() => {
 
-    if (direction === 1) {
-        scale += 0.002;
+    angle += 0.3;
 
-        if (scale >= 1.06) {
-            direction = -1;
+    if (growing) {
+        scale += 0.0008;
+
+        if (scale >= 1.05) {
+            growing = false;
         }
 
     } else {
 
-        scale -= 0.002;
+        scale -= 0.0008;
 
         if (scale <= 1) {
-            direction = 1;
+            growing = true;
         }
 
     }
 
     circle.style.transform =
-        "scale(" + scale + ") rotate(" + ((Date.now() / 70) % 360) + "deg)";
+        `rotate(${angle}deg) scale(${scale})`;
 
 }, 20);
