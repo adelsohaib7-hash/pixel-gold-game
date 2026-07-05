@@ -2,74 +2,39 @@
 <html lang="ar" dir="rtl">
 
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PixcelGold</title>
 
-<title>PixcelGold</title>
-
-<link rel="stylesheet" href="style.css">
-
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <div class="container">
 
-<h1>PixcelGold</h1>
+    <h1>PixcelGold</h1>
 
-<div class="pg-title">
-<span id="pgBalance">PG 39.00</span>
-</div>
+    <div class="pg-title">
+        <span id="pgBalance">PG 39.00</span>
+    </div>
 
-<div class="gold-circle"></div>
+    <div class="gold-circle"></div>
 
-<div class="card">
+    <div class="card">
 
-<div class="green">
-رصيد التعدين
-</div>
+        <!-- النقرات -->
+        <div style="font-size:22px;color:#FFD700;">
+            النقرات المتبقية
+        </div>
 
-<span id="rate">0.0000</span>
+        <div id="clicksLeft" style="font-size:48px;margin-top:10px;">
+            500 / 500
+        </div>
 
-<div style="margin-top:10px;color:#aaa;">
-100 PG / ساعة
-</div>
+        <!-- المؤقت -->
+        <div style="font-size:22px;color:#00ff80;margin-top:25px;">
+            إعادة شحن النقرات بعد
+        </div>
 
-<hr style="margin:25px 0;border:1px solid #333;">
-
-<div style="font-size:22px;color:#FFD700;">
-النقرات المتبقية
-</div>
-
-<div id="clicksLeft"
-style="font-size:45px;margin-top:10px;">
-500 / 500
-</div>
-
-<div style="font-size:22px;color:#00ff80;margin-top:25px;">
-إعادة شحن النقرات بعد
-</div>
-
-<div id="timer"
-style="font-size:38px;margin-top:10px;">
-06:00:00
-</div>
-
-<button id="claimBtn" disabled>
-استلام الأرباح
-</button>
-
-<p class="note">
-يبدأ عداد الست ساعات عند أول نقرة فقط.
-</p>
-
-</div>
-
-</div>
-
-<script src="script.js"></script>
-<script src="effects.js"></script>
-
-</body>
-
-</html>
+        <div id="
